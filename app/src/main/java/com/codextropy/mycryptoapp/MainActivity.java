@@ -27,7 +27,8 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                String st = CallNative();
+                Snackbar.make(view, st, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -97,5 +98,12 @@ public class MainActivity extends AppCompatActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+    public native String CallNative();
+
+    static
+    {
+        System.loadLibrary("CallNative");
     }
 }
