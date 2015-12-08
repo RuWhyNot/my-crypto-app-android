@@ -1,0 +1,3 @@
+[submodule "app/src/main/jni/my-crypto-lib"]
+	path = app/src/main/jni/my-crypto-lib
+	url = git@github.com:RuWhyNot/my-crypto-lib.git
