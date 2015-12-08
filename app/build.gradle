@@ -36,17 +36,13 @@ model {
 
 	android.ndk {
 		moduleName = "CallNative"
+		cppFlags  += "-std=c++11"
+		cppFlags += "-fexceptions"
+		cppFlags += "-frtti"
+		ldLibs += ["atomic"]
+		stl = 'c++_shared'
 	}
 
-	android.sources {
-		main {
-			jni {
-				source {
-					srcDir "src"
-				}
-			}
-		}
-	}
 }
 
 dependencies {

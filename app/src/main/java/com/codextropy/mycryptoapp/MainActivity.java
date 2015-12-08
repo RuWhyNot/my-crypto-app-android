@@ -27,7 +27,7 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String st = CallNative();
+                String st = GetTestString();
                 Snackbar.make(view, st, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
@@ -100,7 +100,7 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public native String CallNative();
+    public native String GetTestString();
 
     static
     {
