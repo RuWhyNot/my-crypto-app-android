@@ -27,8 +27,15 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                String st = GetTestString();
-                Snackbar.make(view, st, Snackbar.LENGTH_LONG)
+                String key = GeneratePrivateKey((int)Math.floor(Math.random() * 100000), 512);
+				String pubKey = GetPublicKey(key);
+
+				String someMessage = GetTestString();
+
+				String encrypted = EncryptMessage(someMessage, pubKey);
+				String decrypted = DecryptMessage(encrypted, key);
+
+                Snackbar.make(view, decrypted, Snackbar.LENGTH_LONG)
                         .setAction("Action", null).show();
             }
         });
@@ -101,6 +108,10 @@ public class MainActivity extends AppCompatActivity
     }
 
     public native String GetTestString();
+    public native String GeneratePrivateKey(int seed, int size);
+	public native String GetPublicKey(String privateKey);
+	public native String EncryptMessage(String message, String publicKey);
+	public native String DecryptMessage(String cipher, String privateKey);
 
     static
     {
