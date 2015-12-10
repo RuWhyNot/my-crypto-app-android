@@ -7,7 +7,7 @@ model {
 
 		defaultConfig.with {
 			applicationId = "com.codextropy.mycryptoapp"
-			minSdkVersion.apiLevel = 10
+			minSdkVersion.apiLevel = 14
 			targetSdkVersion.apiLevel = 23
 			versionCode = 1
 			versionName = "1.0"
