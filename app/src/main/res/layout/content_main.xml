@@ -11,7 +11,9 @@
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/encryptionLayout">
 
         <LinearLayout
             android:orientation="vertical"
@@ -24,21 +26,20 @@
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:text="Key"
-                android:id="@+id/textView2" />
+                android:id="@+id/keyLabel" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Medium Text"
+                android:id="@+id/keyText"/>
 
             <LinearLayout
                 android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:weightSum="100">
-
-                <EditText
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:inputType="textMultiLine"
-                    android:ems="10"
-                    android:id="@+id/editText"
-                    android:layout_weight="70" />
 
                 <GridLayout
                     android:layout_width="wrap_content"
@@ -225,4 +226,19 @@
         </LinearLayout>
 
     </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/keysLayout"
+        android:visibility="visible">
+
+        <ListView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/keysList"
+            android:layout_gravity="left|top"
+            android:headerDividersEnabled="false"/>
+    </FrameLayout>
+
 </RelativeLayout>

@@ -5,8 +5,10 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+
 public class KeyStorage {
-	Context BaseContext;
+	private Context baseContext;
 
 	public enum Type
 	{
@@ -16,12 +18,12 @@ public class KeyStorage {
 
 	KeyStorage(Context context)
 	{
-		BaseContext = context;
+		baseContext = context;
 	}
 
 	public String GetFirstKey(Type type)
 	{
-		DbHelper dbHelper = new DbHelper(BaseContext);
+		DbHelper dbHelper = new DbHelper(baseContext);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		String tableName = DbHelper.GetKeysTableName(type);
@@ -42,16 +44,44 @@ public class KeyStorage {
 
 	public void SaveKey(String key, Type type)
 	{
-		DbHelper dbHelper = new DbHelper(BaseContext);
+		DbHelper dbHelper = new DbHelper(baseContext);
 		ContentValues cv = new ContentValues();
 
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		String tableName = DbHelper.GetKeysTableName(type);
-		//db.delete("RsaBdKeys", null, null);
 
 		cv.put("key", key);
 		long rowID = db.insert(tableName, null, cv);
 		dbHelper.close();
+	}
+
+	public ArrayList<KeyInfo> GetAllKeys(Type type)
+	{
+		DbHelper dbHelper = new DbHelper(baseContext);
+
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		String tableName = DbHelper.GetKeysTableName(type);
+		Cursor c = db.query(tableName, null, null, null, null, null, null);
+
+		ArrayList<KeyInfo> keys = new ArrayList<>();
+		if (c.moveToFirst())
+		{
+			int idColKey = c.getColumnIndex("key");
+
+			do
+			{
+				KeyInfo key = new KeyInfo();
+				key.data = c.getString(idColKey);
+				keys.add(key);
+			}
+			while (c.moveToNext());
+		}
+		c.close();
+
+		dbHelper.close();
+
+		return keys;
 	}
 }

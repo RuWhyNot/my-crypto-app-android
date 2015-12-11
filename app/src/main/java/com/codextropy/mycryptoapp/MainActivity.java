@@ -14,13 +14,23 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
 	KeyStorage keyStorage;
+
+	String currentKey;
+
+	ArrayList<KeyInfo> loadedKeys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -61,9 +71,7 @@ public class MainActivity extends AppCompatActivity
         getPrivateBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String key = keyStorage.GetFirstKey(KeyStorage.Type.Private);
-				EditText resultField = (EditText) findViewById(R.id.editText);
-				resultField.setText(key);
+				OpenKeysLayout(true, KeyStorage.Type.Private);
 			}
 		});
 
@@ -71,9 +79,7 @@ public class MainActivity extends AppCompatActivity
         getPublicBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String pubKey = keyStorage.GetFirstKey(KeyStorage.Type.Public);
-				EditText resultField = (EditText) findViewById(R.id.editText);
-				resultField.setText(pubKey);
+				OpenKeysLayout(true, KeyStorage.Type.Public);
 			}
 		});
 
@@ -81,8 +87,7 @@ public class MainActivity extends AppCompatActivity
 		encryptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                EditText keyField = (EditText) findViewById(R.id.editText);
-                String pubKey = keyField.getText().toString();
+                String pubKey = currentKey;
                 EditText messageField = (EditText) findViewById(R.id.editText2);
 				String message = messageField.getText().toString();
 				String cipher = EncryptMessage(message, pubKey);
@@ -95,8 +100,7 @@ public class MainActivity extends AppCompatActivity
 		decryptBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText keyField = (EditText) findViewById(R.id.editText);
-				String key = keyField.getText().toString();
+				String key = currentKey;
 				EditText cipherField = (EditText) findViewById(R.id.editText2);
 				String cipher = cipherField.getText().toString();
 				String message = DecryptMessage(cipher, key);
@@ -129,8 +133,7 @@ public class MainActivity extends AppCompatActivity
 		copyKey.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText keyField = (EditText) findViewById(R.id.editText);
-				ToClipboard(keyField.getText().toString());
+				ToClipboard(currentKey);
 			}
 		});
 
@@ -152,15 +155,6 @@ public class MainActivity extends AppCompatActivity
 			}
 		});
 
-		Button clearKey = (Button) findViewById(R.id.button11);
-		clearKey.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				EditText keyField = (EditText) findViewById(R.id.editText);
-				keyField.setText("");
-			}
-		});
-
 		Button clearMess = (Button) findViewById(R.id.button12);
 		clearMess.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -174,8 +168,9 @@ public class MainActivity extends AppCompatActivity
 		pasteKey.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText keyField = (EditText) findViewById(R.id.editText);
-				keyField.setText(FromClipboard());
+				currentKey = FromClipboard();
+				TextView keyField = (TextView) findViewById(R.id.keyText);
+				keyField.setText(currentKey);
 			}
 		});
 
@@ -185,6 +180,17 @@ public class MainActivity extends AppCompatActivity
 			public void onClick(View v) {
 				EditText valueField = (EditText) findViewById(R.id.editText2);
 				valueField.setText(FromClipboard());
+			}
+		});
+
+		ListView privateKeysList = (ListView) findViewById(R.id.keysList);
+		privateKeysList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+			@Override
+			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				currentKey = loadedKeys.get(position).data;
+				TextView resultField = (TextView) findViewById(R.id.keyText);
+				resultField.setText(currentKey);
+				OpenEncryptionLayout();
 			}
 		});
 	}
@@ -241,24 +247,66 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
-    @SuppressWarnings("StatementWithEmptyBody")
+	private void HideAllLayouts()
+	{
+		findViewById(R.id.encryptionLayout).setVisibility(View.GONE);
+		findViewById(R.id.keysLayout).setVisibility(View.GONE);
+	}
+
+	private void FillKeysList(KeyStorage.Type type)
+	{
+		ListView keysList = (ListView) findViewById(R.id.keysList);
+
+		ArrayList<KeyInfo> keys = keyStorage.GetAllKeys(type);
+		ArrayList<String> helperList = new ArrayList<>();
+		for (KeyInfo key : keys)
+		{
+			helperList.add(key.data);
+		}
+
+		String[] values = new String[helperList.size()];
+
+		helperList.toArray(values);
+
+		ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
+				android.R.layout.simple_list_item_1, values);
+		keysList.setAdapter(adapter);
+
+		loadedKeys = keys;
+	}
+
+	private void OpenKeysLayout(boolean forChoice, KeyStorage.Type type)
+	{
+		HideAllLayouts();
+		findViewById(R.id.keysLayout).setVisibility(View.VISIBLE);
+		FillKeysList(type);
+		//FillKeysList(KeyStorage.Type.Private);
+	}
+
+	private void OpenEncryptionLayout()
+	{
+
+		HideAllLayouts();
+		findViewById(R.id.encryptionLayout).setVisibility(View.VISIBLE);
+	}
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
 
-        if (id == R.id.nav_camara) {
-            // Handle the camera action
-        } else if (id == R.id.nav_gallery) {
-
+        if (id == R.id.nav_encrypt) {
+			OpenEncryptionLayout();
+        } else if (id == R.id.nav_keys) {
+			OpenKeysLayout(false, KeyStorage.Type.Public);
         } else if (id == R.id.nav_slideshow) {
-
+			HideAllLayouts();
         } else if (id == R.id.nav_manage) {
-
+			HideAllLayouts();
         } else if (id == R.id.nav_share) {
-
+			HideAllLayouts();
         } else if (id == R.id.nav_send) {
-
+			HideAllLayouts();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
