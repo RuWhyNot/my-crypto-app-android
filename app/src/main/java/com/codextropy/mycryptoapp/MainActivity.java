@@ -30,7 +30,9 @@ public class MainActivity extends AppCompatActivity
 
 	String currentKey;
 
-	ArrayList<KeyInfo> loadedKeys;
+	KeyStorage.Type activeKeyList;
+
+	ArrayList<DbKeyInfo> loadedKeys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,13 +47,16 @@ public class MainActivity extends AppCompatActivity
         fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
-				String key = GeneratePrivateKey((int) Math.floor(Math.random() * 100000), 1024);
-				String pubKey = GetPublicKey(key);
+				FullKeyInfo key = new FullKeyInfo();
+				key.GeneratePrivate((int) Math.floor(Math.random() * 100000), 1024);
+
+				FullKeyInfo pubKey = new FullKeyInfo();
+				pubKey.GeneratePublic(key.data);
 
 				String someMessage = GetTestString();
 
-				String encrypted = EncryptMessage(someMessage, pubKey);
-				String decrypted = DecryptMessage(encrypted, key);
+				String encrypted = pubKey.EncryptMessage(someMessage);
+				String decrypted = key.DecryptMessage(encrypted);
 
 				Snackbar.make(view, decrypted, Snackbar.LENGTH_LONG)
 						.setAction("Action", null).show();
@@ -87,10 +92,11 @@ public class MainActivity extends AppCompatActivity
 		encryptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String pubKey = currentKey;
+                FullKeyInfo pubKey = new FullKeyInfo();
+				pubKey.data = currentKey;
                 EditText messageField = (EditText) findViewById(R.id.editText2);
 				String message = messageField.getText().toString();
-				String cipher = EncryptMessage(message, pubKey);
+				String cipher = pubKey.EncryptMessage(message);
 				EditText resultField = (EditText) findViewById(R.id.editText3);
                 resultField.setText(cipher);
             }
@@ -100,10 +106,11 @@ public class MainActivity extends AppCompatActivity
 		decryptBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String key = currentKey;
+				FullKeyInfo key = new FullKeyInfo();
+				key.data = currentKey;
 				EditText cipherField = (EditText) findViewById(R.id.editText2);
 				String cipher = cipherField.getText().toString();
-				String message = DecryptMessage(cipher, key);
+				String message = key.DecryptMessage(cipher);
 				EditText resultField = (EditText) findViewById(R.id.editText3);
 				resultField.setText(message);
 			}
@@ -113,10 +120,12 @@ public class MainActivity extends AppCompatActivity
 		genNewBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				String key = GeneratePrivateKey((int) Math.floor(Math.random() * 100000), 1024);
-				String pubKey = GetPublicKey(key);
-				keyStorage.SaveKey(key, KeyStorage.Type.Private);
-				keyStorage.SaveKey(pubKey, KeyStorage.Type.Public);
+				FullKeyInfo key = new FullKeyInfo();
+				key.GeneratePrivate((int) Math.floor(Math.random() * 100000), 1024);
+				FullKeyInfo pubKey = new FullKeyInfo();
+				pubKey.GeneratePublic(key.data);
+				keyStorage.SaveKey(key.data, KeyStorage.Type.Private);
+				keyStorage.SaveKey(pubKey.data, KeyStorage.Type.Public);
 			}
 		});
 
@@ -187,7 +196,8 @@ public class MainActivity extends AppCompatActivity
 		privateKeysList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-				currentKey = loadedKeys.get(position).data;
+				FullKeyInfo key = keyStorage.GetKey(activeKeyList, loadedKeys.get(position).id);
+				currentKey = key.data;
 				TextView resultField = (TextView) findViewById(R.id.keyText);
 				resultField.setText(currentKey);
 				OpenEncryptionLayout();
@@ -257,11 +267,11 @@ public class MainActivity extends AppCompatActivity
 	{
 		ListView keysList = (ListView) findViewById(R.id.keysList);
 
-		ArrayList<KeyInfo> keys = keyStorage.GetAllKeys(type);
+		ArrayList<DbKeyInfo> keys = keyStorage.GetAllKeys(type);
 		ArrayList<String> helperList = new ArrayList<>();
-		for (KeyInfo key : keys)
+		for (DbKeyInfo key : keys)
 		{
-			helperList.add(key.data);
+			helperList.add(key.name);
 		}
 
 		String[] values = new String[helperList.size()];
@@ -272,6 +282,7 @@ public class MainActivity extends AppCompatActivity
 				android.R.layout.simple_list_item_1, values);
 		keysList.setAdapter(adapter);
 
+		activeKeyList = type;
 		loadedKeys = keys;
 	}
 
@@ -280,12 +291,10 @@ public class MainActivity extends AppCompatActivity
 		HideAllLayouts();
 		findViewById(R.id.keysLayout).setVisibility(View.VISIBLE);
 		FillKeysList(type);
-		//FillKeysList(KeyStorage.Type.Private);
 	}
 
 	private void OpenEncryptionLayout()
 	{
-
 		HideAllLayouts();
 		findViewById(R.id.encryptionLayout).setVisibility(View.VISIBLE);
 	}
@@ -315,10 +324,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     public native String GetTestString();
-    public native String GeneratePrivateKey(int seed, int size);
-	public native String GetPublicKey(String privateKey);
-	public native String EncryptMessage(String message, String publicKey);
-	public native String DecryptMessage(String cipher, String privateKey);
 
     static
     {

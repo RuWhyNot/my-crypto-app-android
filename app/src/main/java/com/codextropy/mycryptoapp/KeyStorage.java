@@ -21,25 +21,24 @@ public class KeyStorage {
 		baseContext = context;
 	}
 
-	public String GetFirstKey(Type type)
+	public FullKeyInfo GetKey(Type type, int id)
 	{
+		FullKeyInfo keyInfo = null;
 		DbHelper dbHelper = new DbHelper(baseContext);
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		String tableName = DbHelper.GetKeysTableName(type);
 
-		Cursor c = db.query(tableName, null, null, null, null, null, null);
+		Cursor c = db.query(tableName, null, "id="+id, null, null, null, null);
 
-		String key = "";
 		if (c.moveToFirst())
 		{
-			// определяем номера столбцов по имени в выборке
-			int publicKeyColIndex = c.getColumnIndex("key");
-			key = c.getString(publicKeyColIndex);
+			keyInfo = new FullKeyInfo();
+			keyInfo.data = c.getString(c.getColumnIndex("key"));
 		}
 		c.close();
 
-		return key;
+		return keyInfo;
 	}
 
 	public void SaveKey(String key, Type type)
@@ -56,7 +55,7 @@ public class KeyStorage {
 		dbHelper.close();
 	}
 
-	public ArrayList<KeyInfo> GetAllKeys(Type type)
+	public ArrayList<DbKeyInfo> GetAllKeys(Type type)
 	{
 		DbHelper dbHelper = new DbHelper(baseContext);
 
@@ -65,15 +64,17 @@ public class KeyStorage {
 		String tableName = DbHelper.GetKeysTableName(type);
 		Cursor c = db.query(tableName, null, null, null, null, null, null);
 
-		ArrayList<KeyInfo> keys = new ArrayList<>();
+		ArrayList<DbKeyInfo> keys = new ArrayList<>();
 		if (c.moveToFirst())
 		{
-			int idColKey = c.getColumnIndex("key");
+			int idColName = c.getColumnIndex("key");
+			int idColId = c.getColumnIndex("id");
 
 			do
 			{
-				KeyInfo key = new KeyInfo();
-				key.data = c.getString(idColKey);
+				DbKeyInfo key = new DbKeyInfo();
+				key.name = c.getString(idColName);
+				key.id = c.getInt(idColId);
 				keys.add(key);
 			}
 			while (c.moveToNext());

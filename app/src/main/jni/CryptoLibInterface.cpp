@@ -16,29 +16,35 @@ JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetTestSt
 	return env->NewStringUTF(decryptedData->ToString().c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GeneratePrivateKey
-		(JNIEnv *env, jobject, int seed, int size)
+JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePrivate
+		(JNIEnv *env, jobject instance, int seed, int size)
 {
 	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::Generate((unsigned long)seed, size);
-	return env->NewStringUTF(key->ToData()->ToBase64().c_str());
+	jstring keyData = env->NewStringUTF(key->ToData()->ToBase64().c_str());
+	jclass clazz = env->GetObjectClass(instance);
+	env->SetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"), keyData);
 }
-
-JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetPublicKey
-		(JNIEnv *env, jobject, jstring privateKeyBase64_)
+JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePublic
+		(JNIEnv *env, jobject instance, jstring privateKeyBase64_)
 {
 	const char *privateKeyBase64 = env->GetStringUTFChars(privateKeyBase64_, 0);
 	Crypto::Data::Ptr keyData = Crypto::Data::Create(privateKeyBase64, Crypto::Data::Encoding::Base64);
 	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
 	Crypto::PublicKey::Ptr pubKey = key->GetPublicKey();
 	env->ReleaseStringUTFChars(privateKeyBase64_, privateKeyBase64);
-	return env->NewStringUTF(pubKey->ToData()->ToBase64().c_str());
+	jstring pubKeyData = env->NewStringUTF(pubKey->ToData()->ToBase64().c_str());
+	jclass clazz = env->GetObjectClass(instance);
+	env->SetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"), pubKeyData);
 }
 
-JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_EncryptMessage
-		(JNIEnv *env, jobject, jstring message_, jstring publicKeyBase64_)
+JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_EncryptMessage
+		(JNIEnv *env, jobject instance, jstring message_)
 {
 	const char *message = env->GetStringUTFChars(message_, 0);
-	const char *publicKeyBase64 = env->GetStringUTFChars(publicKeyBase64_, 0);
+
+	jclass clazz = env->GetObjectClass(instance);
+	jstring keyDataStr = (jstring)env->GetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"));
+	const char *publicKeyBase64 = env->GetStringUTFChars(keyDataStr, 0);
 
 	Crypto::Data::Ptr keyData = Crypto::Data::Create(publicKeyBase64, Crypto::Data::Encoding::Base64);
 	Crypto::PublicKey::Ptr key = Crypto::PublicKey_v20::CreateFromData(keyData);
@@ -46,16 +52,18 @@ JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_EncryptMe
 	std::string result = key->EncryptData(messageData)->ToBase64();
 
 	env->ReleaseStringUTFChars(message_, message);
-	env->ReleaseStringUTFChars(publicKeyBase64_, publicKeyBase64);
 
 	return env->NewStringUTF(result.c_str());
 }
 
-JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_DecryptMessage
-		(JNIEnv *env, jobject, jstring cipher_, jstring privateKeyBase64_)
+JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_DecryptMessage
+		(JNIEnv *env, jobject instance, jstring cipher_)
 {
 	const char *cipher = env->GetStringUTFChars(cipher_, 0);
-	const char *privateKeyBase64 = env->GetStringUTFChars(privateKeyBase64_, 0);
+
+	jclass clazz = env->GetObjectClass(instance);
+	jstring keyDataStr = (jstring)env->GetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"));
+	const char *privateKeyBase64 = env->GetStringUTFChars(keyDataStr, 0);
 
 	Crypto::Data::Ptr keyData = Crypto::Data::Create(privateKeyBase64, Crypto::Data::Encoding::Base64);
 	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
@@ -63,7 +71,6 @@ JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_MainActivity_DecryptMe
 	std::string result = key->DecryptData(cipherData)->ToString();
 
 	env->ReleaseStringUTFChars(cipher_, cipher);
-	env->ReleaseStringUTFChars(privateKeyBase64_, privateKeyBase64);
 
 	return env->NewStringUTF(result.c_str());
 }
