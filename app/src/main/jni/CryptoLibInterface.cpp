@@ -21,8 +21,10 @@ JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePriva
 {
 	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::Generate((unsigned long)seed, size);
 	jstring keyData = env->NewStringUTF(key->ToData()->ToBase64().c_str());
+	Crypto::Fingerprint fingerprint = key->GetFingerprint();
 	jclass clazz = env->GetObjectClass(instance);
 	env->SetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"), keyData);
+	env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"), static_cast<int>(fingerprint));
 }
 JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePublic
 		(JNIEnv *env, jobject instance, jstring privateKeyBase64_)
@@ -31,10 +33,12 @@ JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePubli
 	Crypto::Data::Ptr keyData = Crypto::Data::Create(privateKeyBase64, Crypto::Data::Encoding::Base64);
 	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
 	Crypto::PublicKey::Ptr pubKey = key->GetPublicKey();
+	Crypto::Fingerprint fingerprint = pubKey->GetFingerprint();
 	env->ReleaseStringUTFChars(privateKeyBase64_, privateKeyBase64);
 	jstring pubKeyData = env->NewStringUTF(pubKey->ToData()->ToBase64().c_str());
 	jclass clazz = env->GetObjectClass(instance);
 	env->SetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"), pubKeyData);
+	env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"), static_cast<int>(fingerprint));
 }
 
 JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_EncryptMessage

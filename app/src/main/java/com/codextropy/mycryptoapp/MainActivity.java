@@ -124,10 +124,12 @@ public class MainActivity extends AppCompatActivity
 			public void onClick(View v) {
 				FullKeyInfo key = new FullKeyInfo();
 				key.GeneratePrivate((int) Math.floor(Math.random() * 100000), 1024);
+				key.name = Integer.toHexString(key.fingerprint);
 				FullKeyInfo pubKey = new FullKeyInfo();
 				pubKey.GeneratePublic(key.data);
-				keyStorage.SaveKey(key.data, KeyStorage.Type.Private);
-				keyStorage.SaveKey(pubKey.data, KeyStorage.Type.Public);
+				pubKey.name = Integer.toHexString(pubKey.fingerprint);
+				keyStorage.SaveKey(key, KeyStorage.Type.Private);
+				keyStorage.SaveKey(pubKey, KeyStorage.Type.Public);
 				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
 			}
 		});
@@ -199,6 +201,15 @@ public class MainActivity extends AppCompatActivity
 				TextView resultField = (TextView) findViewById(R.id.keyText);
 				resultField.setText(currentKey);
 				OpenEncryptionLayout();
+			}
+		});
+
+		privateKeysList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+				keyStorage.RemoveKey(activeKeyList, loadedKeys.get(position).id);
+				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
+				return true;
 			}
 		});
 	}

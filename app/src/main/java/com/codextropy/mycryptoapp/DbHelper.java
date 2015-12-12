@@ -33,13 +33,15 @@ class DbHelper extends SQLiteOpenHelper
     {
         db.execSQL("create table if not exists "+PRIVATE_KEYS_TABLE_NAME+" ("
                 + "id integer primary key autoincrement"
-                //+ ",fingerprint number"
-                + ",key text" + ");");
+                + ",fingerprint number"
+                + ",name text"
+                + ",data text" + ");");
 
         db.execSQL("create table if not exists "+PUBLIC_KEYS_TABLE_NAME+" ("
                 + "id integer primary key autoincrement"
-                //+ ",fingerprint number"
-                + ",key text" + ");");
+                + ",fingerprint number"
+                + ",name text"
+                + ",data text" + ");");
     }
 
     @Override

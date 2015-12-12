@@ -34,14 +34,16 @@ public class KeyStorage {
 		if (c.moveToFirst())
 		{
 			keyInfo = new FullKeyInfo();
-			keyInfo.data = c.getString(c.getColumnIndex("key"));
+			keyInfo.data = c.getString(c.getColumnIndex("data"));
+			keyInfo.fingerprint = c.getInt(c.getColumnIndex("fingerprint"));
+			keyInfo.name = c.getString(c.getColumnIndex("name"));
 		}
 		c.close();
 
 		return keyInfo;
 	}
 
-	public void SaveKey(String key, Type type)
+	public void SaveKey(FullKeyInfo key, Type type)
 	{
 		DbHelper dbHelper = new DbHelper(baseContext);
 		ContentValues cv = new ContentValues();
@@ -50,9 +52,20 @@ public class KeyStorage {
 
 		String tableName = DbHelper.GetKeysTableName(type);
 
-		cv.put("key", key);
+		cv.put("data", key.data);
+		cv.put("fingerprint", key.fingerprint);
+		cv.put("name", key.name);
 		long rowID = db.insert(tableName, null, cv);
 		dbHelper.close();
+	}
+
+	public void RemoveKey(Type type, int id)
+	{
+		DbHelper dbHelper = new DbHelper(baseContext);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		String tableName = DbHelper.GetKeysTableName(type);
+		db.delete(tableName, "id="+id, null);
 	}
 
 	public ArrayList<DbKeyInfo> GetAllKeys(Type type)
@@ -67,7 +80,7 @@ public class KeyStorage {
 		ArrayList<DbKeyInfo> keys = new ArrayList<>();
 		if (c.moveToFirst())
 		{
-			int idColName = c.getColumnIndex("key");
+			int idColName = c.getColumnIndex("name");
 			int idColId = c.getColumnIndex("id");
 
 			do
