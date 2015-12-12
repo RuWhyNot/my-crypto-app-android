@@ -2,6 +2,7 @@ package com.codextropy.mycryptoapp;
 
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity
 	String currentKey;
 
 	KeyStorage.Type activeKeyList;
+	boolean isKeyListOpenedForChoice;
 
 	ArrayList<DbKeyInfo> loadedKeys;
 
@@ -126,6 +128,7 @@ public class MainActivity extends AppCompatActivity
 				pubKey.GeneratePublic(key.data);
 				keyStorage.SaveKey(key.data, KeyStorage.Type.Private);
 				keyStorage.SaveKey(pubKey.data, KeyStorage.Type.Public);
+				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
 			}
 		});
 
@@ -138,11 +141,16 @@ public class MainActivity extends AppCompatActivity
 			}
 		});
 
-		Button copyKey = (Button) findViewById(R.id.button6);
-		copyKey.setOnClickListener(new View.OnClickListener() {
+		Button shareBtn = (Button) findViewById(R.id.button6);
+		shareBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				ToClipboard(currentKey);
+				EditText resultField = (EditText) findViewById(R.id.editText3);
+				Intent sendIntent = new Intent();
+				sendIntent.setAction(Intent.ACTION_SEND);
+				sendIntent.putExtra(Intent.EXTRA_TEXT, resultField.getText().toString());
+				sendIntent.setType("text/plain");
+				startActivity(sendIntent);
 			}
 		});
 
@@ -170,16 +178,6 @@ public class MainActivity extends AppCompatActivity
 			public void onClick(View v) {
 				EditText mesField = (EditText) findViewById(R.id.editText2);
 				mesField.setText("");
-			}
-		});
-
-		Button pasteKey = (Button) findViewById(R.id.button10);
-		pasteKey.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				currentKey = FromClipboard();
-				TextView keyField = (TextView) findViewById(R.id.keyText);
-				keyField.setText(currentKey);
 			}
 		});
 
@@ -288,8 +286,19 @@ public class MainActivity extends AppCompatActivity
 
 	private void OpenKeysLayout(boolean forChoice, KeyStorage.Type type)
 	{
+		isKeyListOpenedForChoice = forChoice;
 		HideAllLayouts();
 		findViewById(R.id.keysLayout).setVisibility(View.VISIBLE);
+
+		if (type == KeyStorage.Type.Private)
+		{
+			findViewById(R.id.button13).setVisibility(View.VISIBLE);
+		}
+		else
+		{
+			findViewById(R.id.button13).setVisibility(View.GONE);
+		}
+
 		FillKeysList(type);
 	}
 
