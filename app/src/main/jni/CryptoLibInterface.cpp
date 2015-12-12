@@ -2,6 +2,7 @@
 #include "my-crypto-lib/src/versions/v20/privatekey_v20.h"
 #include "my-crypto-lib/src/versions/v20/publickey_v20.h"
 
+
 extern "C"
 {
 
@@ -77,6 +78,18 @@ JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_DecryptMes
 	env->ReleaseStringUTFChars(cipher_, cipher);
 
 	return env->NewStringUTF(result.c_str());
+}
+
+JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetDataFingerprint
+		(JNIEnv *env, jobject instance, jstring dataBase64_)
+{
+	const char *dataBase64 = env->GetStringUTFChars(dataBase64_, 0);
+
+	Crypto::Data::Ptr data = Crypto::Data::Create(std::string(dataBase64), Crypto::Data::Encoding::Base64);
+
+	env->ReleaseStringUTFChars(dataBase64_, dataBase64);
+
+	return static_cast<int>(data->GetFingerprint());
 }
 
 } // extern "C"

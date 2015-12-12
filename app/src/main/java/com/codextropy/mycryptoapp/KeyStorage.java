@@ -6,6 +6,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class KeyStorage {
 	private Context baseContext;
@@ -43,6 +44,39 @@ public class KeyStorage {
 		return keyInfo;
 	}
 
+	public List<FullKeyInfo> GetKeysForFingerprint(Type type, int fingerprint)
+	{
+		List<FullKeyInfo> result = new ArrayList<>();
+
+		DbHelper dbHelper = new DbHelper(baseContext);
+		SQLiteDatabase db = dbHelper.getWritableDatabase();
+
+		String tableName = DbHelper.GetKeysTableName(type);
+
+		Cursor c = db.query(tableName, null, "fingerprint="+fingerprint, null, null, null, null);
+
+		if (c.moveToFirst())
+		{
+			int idColData = c.getColumnIndex("data");
+			int idColFingerprint = c.getColumnIndex("fingerprint");
+			int idColName = c.getColumnIndex("name");
+
+			do
+			{
+				FullKeyInfo key = new FullKeyInfo();
+				key = new FullKeyInfo();
+				key.data = c.getString(idColData);
+				key.fingerprint = c.getInt(idColFingerprint);
+				key.name = c.getString(idColName);
+				result.add(key);
+			}
+			while (c.moveToNext());
+		}
+		c.close();
+
+		return result;
+	}
+
 	public void SaveKey(FullKeyInfo key, Type type)
 	{
 		DbHelper dbHelper = new DbHelper(baseContext);
@@ -55,7 +89,7 @@ public class KeyStorage {
 		cv.put("data", key.data);
 		cv.put("fingerprint", key.fingerprint);
 		cv.put("name", key.name);
-		long rowID = db.insert(tableName, null, cv);
+		db.insert(tableName, null, cv);
 		dbHelper.close();
 	}
 
@@ -68,7 +102,7 @@ public class KeyStorage {
 		db.delete(tableName, "id="+id, null);
 	}
 
-	public ArrayList<DbKeyInfo> GetAllKeys(Type type)
+	public List<DbKeyInfo> GetAllKeys(Type type)
 	{
 		DbHelper dbHelper = new DbHelper(baseContext);
 

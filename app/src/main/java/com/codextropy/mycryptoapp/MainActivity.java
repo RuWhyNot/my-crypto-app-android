@@ -23,6 +23,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity
 	KeyStorage.Type activeKeyList;
 	boolean isKeyListOpenedForChoice;
 
-	ArrayList<DbKeyInfo> loadedKeys;
+	List<DbKeyInfo> loadedKeys;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -108,11 +109,9 @@ public class MainActivity extends AppCompatActivity
 		decryptBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				FullKeyInfo key = new FullKeyInfo();
-				key.data = currentKey;
 				EditText cipherField = (EditText) findViewById(R.id.editText2);
 				String cipher = cipherField.getText().toString();
-				String message = key.DecryptMessage(cipher);
+				String message = DecryptMessage(cipher);
 				EditText resultField = (EditText) findViewById(R.id.editText3);
 				resultField.setText(message);
 			}
@@ -266,6 +265,21 @@ public class MainActivity extends AppCompatActivity
         return super.onOptionsItemSelected(item);
     }
 
+	private String DecryptMessage(String cipher)
+	{
+		int fingerprint = GetDataFingerprint(cipher);
+		List<FullKeyInfo> keys = keyStorage.GetKeysForFingerprint(KeyStorage.Type.Private ,fingerprint);
+		for (FullKeyInfo key : keys)
+		{
+			String message = key.DecryptMessage(cipher);
+			if (!message.isEmpty()) {
+				return message;
+			}
+		}
+
+		return "";
+	}
+
 	private void HideAllLayouts()
 	{
 		findViewById(R.id.encryptionLayout).setVisibility(View.GONE);
@@ -276,8 +290,8 @@ public class MainActivity extends AppCompatActivity
 	{
 		ListView keysList = (ListView) findViewById(R.id.keysList);
 
-		ArrayList<DbKeyInfo> keys = keyStorage.GetAllKeys(type);
-		ArrayList<String> helperList = new ArrayList<>();
+		List<DbKeyInfo> keys = keyStorage.GetAllKeys(type);
+		List<String> helperList = new ArrayList<>();
 		for (DbKeyInfo key : keys)
 		{
 			helperList.add(key.name);
@@ -313,8 +327,7 @@ public class MainActivity extends AppCompatActivity
 		FillKeysList(type);
 	}
 
-	private void OpenEncryptionLayout()
-	{
+	private void OpenEncryptionLayout() {
 		HideAllLayouts();
 		findViewById(R.id.encryptionLayout).setVisibility(View.VISIBLE);
 	}
@@ -339,11 +352,12 @@ public class MainActivity extends AppCompatActivity
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        drawer.closeDrawer(GravityCompat.START);
+		drawer.closeDrawer(GravityCompat.START);
         return true;
     }
 
     public native String GetTestString();
+	public native int GetDataFingerprint(String data);
 
     static
     {

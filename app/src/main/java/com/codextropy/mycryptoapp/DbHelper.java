@@ -10,7 +10,7 @@ class DbHelper extends SQLiteOpenHelper
 	private static final String PRIVATE_KEYS_TABLE_NAME = "PrivateKeys";
 	private static final String PUBLIC_KEYS_TABLE_NAME = "PublicKeys";
 
-    public DbHelper(Context context)
+	public DbHelper(Context context)
     {
         super(context, "myDB", null, 1);
     }
@@ -31,22 +31,22 @@ class DbHelper extends SQLiteOpenHelper
     @Override
     public void onCreate(SQLiteDatabase db)
     {
-        db.execSQL("create table if not exists "+PRIVATE_KEYS_TABLE_NAME+" ("
-                + "id integer primary key autoincrement"
-                + ",fingerprint number"
-                + ",name text"
-                + ",data text" + ");");
+		db.execSQL("create table if not exists "+PRIVATE_KEYS_TABLE_NAME+" ("
+				+ "id integer primary key autoincrement"
+				+ ",fingerprint number"
+				+ ",name text"
+				+ ",data text" + ");");
 
-        db.execSQL("create table if not exists "+PUBLIC_KEYS_TABLE_NAME+" ("
-                + "id integer primary key autoincrement"
-                + ",fingerprint number"
-                + ",name text"
-                + ",data text" + ");");
+		db.execSQL("create table if not exists "+PUBLIC_KEYS_TABLE_NAME+" ("
+				+ "id integer primary key autoincrement"
+				+ ",fingerprint number"
+				+ ",name text"
+				+ ",data text" + ");");
     }
 
-    @Override
-    public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
-    {
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion)
+	{
 
-    }
+	}
 }
