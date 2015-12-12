@@ -46,6 +46,16 @@ public class MainActivity extends AppCompatActivity
 
 		keyStorage = new KeyStorage(getBaseContext());
 
+		Intent receivedIntent = getIntent();
+		String receivedAction = receivedIntent.getAction();
+		String receivedType = receivedIntent.getType();
+		if(receivedAction.equals(Intent.ACTION_SEND))
+		{
+			OpenDecryptionLayout();
+			EditText cipherText = (EditText) findViewById(R.id.cipherText);
+			cipherText.setText(receivedIntent.getStringExtra(Intent.EXTRA_TEXT));
+		}
+
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
 			@Override
