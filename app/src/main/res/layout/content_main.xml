@@ -12,7 +12,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/encryptionLayout">
 
         <LinearLayout
@@ -78,7 +78,7 @@
             </LinearLayout>
 
             <Button
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:text="Encrypt"
                 android:id="@+id/button"
@@ -135,7 +135,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:visibility="gone"
+        android:visibility="visible"
         android:id="@+id/decryptionLayout">
 
         <LinearLayout
@@ -162,21 +162,21 @@
                     android:layout_height="wrap_content"
                     android:inputType="textMultiLine"
                     android:ems="10"
-                    android:id="@+id/editText"
+                    android:id="@+id/cipherText"
                     android:layout_weight="60"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Paste"
-                    android:id="@+id/button3"
+                    android:id="@+id/cipherPasteBtn"
                     android:layout_weight="20"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Clear"
-                    android:id="@+id/button4"
+                    android:id="@+id/cipherClearBtn"
                     android:layout_weight="20"/>
 
             </LinearLayout>
@@ -205,7 +205,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:inputType="textMultiLine"
-                android:id="@+id/editText4"
+                android:id="@+id/decryptedText"
                 android:editable="false"/>
 
             <LinearLayout
@@ -218,14 +218,14 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Copy"
-                    android:id="@+id/button11"
+                    android:id="@+id/decryptedCopyBtn"
                     android:layout_weight="50"/>
 
                 <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Clear"
-                    android:id="@+id/button15"
+                    android:id="@+id/decryptedClearBtn"
                     android:layout_weight="50"/>
 
             </LinearLayout>

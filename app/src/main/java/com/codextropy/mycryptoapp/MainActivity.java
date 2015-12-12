@@ -101,10 +101,10 @@ public class MainActivity extends AppCompatActivity
 		decryptBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText cipherField = (EditText) findViewById(R.id.editText);
+				EditText cipherField = (EditText) findViewById(R.id.cipherText);
 				String cipher = cipherField.getText().toString();
 				String message = DecryptMessage(cipher);
-				EditText resultField = (EditText) findViewById(R.id.editText4);
+				EditText resultField = (EditText) findViewById(R.id.decryptedText);
 				resultField.setText(message);
 			}
 		});
@@ -171,6 +171,42 @@ public class MainActivity extends AppCompatActivity
 			public void onClick(View v) {
 				EditText valueField = (EditText) findViewById(R.id.editText2);
 				valueField.setText(FromClipboard());
+			}
+		});
+
+		Button cipherPasteBtn = (Button) findViewById(R.id.cipherPasteBtn);
+		cipherPasteBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText cipherField = (EditText) findViewById(R.id.cipherText);
+				cipherField.setText(FromClipboard());
+			}
+		});
+
+		Button cipherClearBtn = (Button) findViewById(R.id.cipherClearBtn);
+		cipherClearBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText cipherField = (EditText) findViewById(R.id.cipherText);
+				cipherField.setText("");
+			}
+		});
+
+		Button decryptedCopyBtn = (Button) findViewById(R.id.decryptedCopyBtn);
+		decryptedCopyBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText resultField = (EditText) findViewById(R.id.decryptedText);
+				ToClipboard(resultField.getText().toString());
+			}
+		});
+
+		Button decryptedClearBtn = (Button) findViewById(R.id.decryptedClearBtn);
+		decryptedClearBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				EditText cipherField = (EditText) findViewById(R.id.decryptedText);
+				cipherField.setText("");
 			}
 		});
 

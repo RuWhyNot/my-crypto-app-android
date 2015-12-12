@@ -27,6 +27,7 @@ JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePriva
 	env->SetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"), keyData);
 	env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"), static_cast<int>(fingerprint));
 }
+
 JNIEXPORT void JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_GeneratePublic
 		(JNIEnv *env, jobject instance, jstring privateKeyBase64_)
 {
