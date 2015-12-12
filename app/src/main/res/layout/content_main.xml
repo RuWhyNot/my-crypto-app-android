@@ -32,37 +32,13 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="No Key Selected"
+                android:text="Press here to select Key..."
                 android:id="@+id/keyText"/>
 
-            <LinearLayout
-                android:orientation="horizontal"
+            <Space
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:weightSum="100"
-                android:baselineAligned="false">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Get Private"
-                    android:id="@+id/button3"
-                    android:width="25dp"
-                    android:layout_row="1"
-                    android:layout_column="0"
-                    android:layout_weight="50"/>
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Get Public"
-                    android:id="@+id/button4"
-                    android:width="25dp"
-                    android:layout_weight="50"
-                    android:layout_row="1"
-                    android:layout_column="1" />
-
-            </LinearLayout>
+                android:minHeight="10dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,65 +59,30 @@
                     android:inputType="textMultiLine"
                     android:ems="10"
                     android:id="@+id/editText2"
-                    android:layout_weight="70" />
+                    android:layout_weight="60"/>
 
-                <GridLayout
+                <Button
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:layout_weight="30"
-                    >
+                    android:text="Paste"
+                    android:id="@+id/button9"
+                    android:layout_weight="20"/>
 
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Clear"
-                        android:id="@+id/button12"
-                        android:layout_weight="10"
-                        android:layout_gravity="right"/>
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Copy"
-                        android:id="@+id/button7"
-                        android:layout_weight="10"
-                        android:layout_gravity="right"/>
-
-                    <Button
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="Paste"
-                        android:id="@+id/button9"
-                        android:layout_weight="10"
-                        android:layout_gravity="right"/>
-                </GridLayout>
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear"
+                    android:id="@+id/button12"
+                    android:layout_weight="20"/>
 
             </LinearLayout>
 
-            <LinearLayout
-                android:orientation="horizontal"
-                android:layout_width="match_parent"
+            <Button
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:gravity="center_vertical">
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Encrypt"
-                    android:id="@+id/button"
-                    android:width="0dp"
-                    android:layout_weight="25" />
-
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="Decrypt"
-                    android:id="@+id/button2"
-                    android:width="25dp"
-                    android:layout_weight="25" />
-
-            </LinearLayout>
+                android:text="Encrypt"
+                android:id="@+id/button"
+                />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -189,6 +130,106 @@
 
         </LinearLayout>
 
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:id="@+id/decryptionLayout">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:weightSum="100">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Cipher:"
+                android:id="@+id/textView7"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="100">
+
+                <EditText
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:inputType="textMultiLine"
+                    android:ems="10"
+                    android:id="@+id/editText"
+                    android:layout_weight="60"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Paste"
+                    android:id="@+id/button3"
+                    android:layout_weight="20"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear"
+                    android:id="@+id/button4"
+                    android:layout_weight="20"/>
+
+            </LinearLayout>
+
+            <Button
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:text="Decrypt"
+                android:id="@+id/button10"
+                android:width="25dp"
+                />
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Result:"
+                android:id="@+id/textView8"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:id="@+id/editText4"
+                android:editable="false"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:weightSum="100">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Copy"
+                    android:id="@+id/button11"
+                    android:layout_weight="50"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clear"
+                    android:id="@+id/button15"
+                    android:layout_weight="50"/>
+
+            </LinearLayout>
+        </LinearLayout>
     </FrameLayout>
 
     <FrameLayout

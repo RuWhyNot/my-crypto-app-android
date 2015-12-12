@@ -75,15 +75,7 @@ public class MainActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        Button getPrivateBtn = (Button) findViewById(R.id.button3);
-        getPrivateBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				OpenKeysLayout(true, KeyStorage.Type.Private);
-			}
-		});
-
-        Button getPublicBtn = (Button) findViewById(R.id.button4);
+		TextView getPublicBtn = (TextView) findViewById(R.id.keyText);
         getPublicBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -105,14 +97,14 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-		Button decryptBtn = (Button) findViewById(R.id.button2);
+		Button decryptBtn = (Button) findViewById(R.id.button10);
 		decryptBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				EditText cipherField = (EditText) findViewById(R.id.editText2);
+				EditText cipherField = (EditText) findViewById(R.id.editText);
 				String cipher = cipherField.getText().toString();
 				String message = DecryptMessage(cipher);
-				EditText resultField = (EditText) findViewById(R.id.editText3);
+				EditText resultField = (EditText) findViewById(R.id.editText4);
 				resultField.setText(message);
 			}
 		});
@@ -152,15 +144,6 @@ public class MainActivity extends AppCompatActivity
 				sendIntent.putExtra(Intent.EXTRA_TEXT, resultField.getText().toString());
 				sendIntent.setType("text/plain");
 				startActivity(sendIntent);
-			}
-		});
-
-		Button copyValue = (Button) findViewById(R.id.button7);
-		copyValue.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				EditText valueField = (EditText) findViewById(R.id.editText2);
-				ToClipboard(valueField.getText().toString());
 			}
 		});
 
@@ -268,7 +251,7 @@ public class MainActivity extends AppCompatActivity
 	private String DecryptMessage(String cipher)
 	{
 		int fingerprint = GetDataFingerprint(cipher);
-		List<FullKeyInfo> keys = keyStorage.GetKeysForFingerprint(KeyStorage.Type.Private ,fingerprint);
+		List<FullKeyInfo> keys = keyStorage.GetKeysForFingerprint(KeyStorage.Type.Private, fingerprint);
 		for (FullKeyInfo key : keys)
 		{
 			String message = key.DecryptMessage(cipher);
@@ -283,6 +266,7 @@ public class MainActivity extends AppCompatActivity
 	private void HideAllLayouts()
 	{
 		findViewById(R.id.encryptionLayout).setVisibility(View.GONE);
+		findViewById(R.id.decryptionLayout).setVisibility(View.GONE);
 		findViewById(R.id.keysLayout).setVisibility(View.GONE);
 	}
 
@@ -332,6 +316,11 @@ public class MainActivity extends AppCompatActivity
 		findViewById(R.id.encryptionLayout).setVisibility(View.VISIBLE);
 	}
 
+	private void OpenDecryptionLayout() {
+		HideAllLayouts();
+		findViewById(R.id.decryptionLayout).setVisibility(View.VISIBLE);
+	}
+
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
@@ -340,9 +329,9 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_encrypt) {
 			OpenEncryptionLayout();
         } else if (id == R.id.nav_keys) {
-			OpenKeysLayout(false, KeyStorage.Type.Public);
-        } else if (id == R.id.nav_slideshow) {
-			HideAllLayouts();
+			OpenKeysLayout(false, KeyStorage.Type.Private);
+        } else if (id == R.id.nav_decryption) {
+			OpenDecryptionLayout();
         } else if (id == R.id.nav_manage) {
 			HideAllLayouts();
         } else if (id == R.id.nav_share) {
