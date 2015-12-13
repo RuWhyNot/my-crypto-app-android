@@ -269,7 +269,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/editKeyLayout"
-        android:visibility="gone">
+        >
 
         <TextView
             android:layout_width="wrap_content"
@@ -311,7 +311,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Back"
+                android:text="Cancel"
                 android:id="@+id/closeKeyEditBtn"/>
 
             <Button
@@ -356,26 +356,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/shareGetLayout"
-        android:visibility="visible">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:text="Input:"
-            android:id="@+id/textView9"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Data here"
-            android:id="@+id/textView10"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"/>
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -385,13 +366,78 @@
             android:text="Encrypted:"
             android:visibility="visible"/>
 
-        <EditText
-            android:layout_width="fill_parent"
+        <TextView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:inputType="textMultiLine"
-            android:ems="10"
-            android:id="@+id/editText"
-            android:visibility="visible"/>
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Result here"
+            android:id="@+id/shareResultView"/>
+
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="10dp"/>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Copy"
+                android:id="@+id/copyEncryptedBtn"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Show Details"
+                android:id="@+id/showDecryptionDetailsBtn"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/decryptionDetailsLayout"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Input:"
+                android:id="@+id/textView9"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Data here"
+                android:id="@+id/shareInputView"/>
+
+            <Space
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="10dp"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Used Key:"
+                android:id="@+id/textView13"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Key Name here"
+                android:id="@+id/usedKeyNameView"/>
+        </LinearLayout>
+
     </LinearLayout>
 
 </RelativeLayout>

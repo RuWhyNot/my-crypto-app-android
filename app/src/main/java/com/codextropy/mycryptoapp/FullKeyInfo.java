@@ -5,6 +5,8 @@ public class FullKeyInfo {
 	public String data;
 	public String name;
 	public int fingerprint;
+	public int dbId;
+	public KeyStorage.Type keyType;
 
 	public native void GeneratePrivate(int seed, int size);
 	public native void GeneratePublic(String privateKeyData);
@@ -13,4 +15,9 @@ public class FullKeyInfo {
 	public native String DecryptMessage(String cipher);
 
 	public native void UpdateFingerprint();
+
+	public FullKeyInfo()
+	{
+		dbId = -1;
+	}
 }

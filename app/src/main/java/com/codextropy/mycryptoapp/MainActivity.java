@@ -35,7 +35,7 @@ public class MainActivity extends AppCompatActivity
 	KeyStorage.Type activeKeyList;
 	boolean isKeyListOpenedForChoice;
 
-	DbKeyInfo editableKey;
+	FullKeyInfo editableKey;
 
 	List<DbKeyInfo> loadedKeys;
 
@@ -136,11 +136,8 @@ public class MainActivity extends AppCompatActivity
 				FullKeyInfo pubKey = new FullKeyInfo();
 				pubKey.GeneratePublic(key.data);
 				pubKey.name = Integer.toHexString(pubKey.fingerprint);
-				int id = keyStorage.SaveKey(key, KeyStorage.Type.Private);
 
-				editableKey = new DbKeyInfo();
-				editableKey.id = id;
-				OpenEditKeyLayout();
+				OpenEditKeyLayout(new FullKeyInfo());
 			}
 		});
 
@@ -240,9 +237,10 @@ public class MainActivity extends AppCompatActivity
 		privateKeysList.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
 			@Override
 			public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-				editableKey = new DbKeyInfo();
-				editableKey.id = loadedKeys.get(position).id;
-				OpenEditKeyLayout();
+				FullKeyInfo keyInfo = keyStorage.GetKey(activeKeyList, loadedKeys.get(position).id);
+				keyInfo.dbId = loadedKeys.get(position).id;
+				keyInfo.keyType = activeKeyList;
+				OpenEditKeyLayout(keyInfo);
 				return true;
 			}
 		});
@@ -251,8 +249,9 @@ public class MainActivity extends AppCompatActivity
 		addNewKeyBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				editableKey = null;
-				OpenEditKeyLayout();
+				FullKeyInfo keyInfo = new FullKeyInfo();
+				keyInfo.keyType = activeKeyList;
+				OpenEditKeyLayout(keyInfo);
 			}
 		});
 
@@ -260,27 +259,34 @@ public class MainActivity extends AppCompatActivity
 		saveKeyBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				String name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
+				if (name.isEmpty()) {
+					ShowMessage("You must specify a name", v);
+					return;
+				}
+
 				FullKeyInfo key = new FullKeyInfo();
 
-				key.name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
 				key.data = ((EditText) findViewById(R.id.keyDataText)).getText().toString();
+				key.name = name;
 				key.UpdateFingerprint();
 
-				if (editableKey != null) {
+				if (editableKey.dbId != -1) {
 					if (activeKeyList == KeyStorage.Type.Private) {
-						keyStorage.UpdateKey(editableKey.id, key, KeyStorage.Type.Private);
+						keyStorage.UpdateKey(editableKey.dbId, key, KeyStorage.Type.Private);
 					} else {
-						keyStorage.UpdateKey(editableKey.id, key, KeyStorage.Type.Public);
+						keyStorage.UpdateKey(editableKey.dbId, key, KeyStorage.Type.Public);
 					}
 				}
 				else {
-					if (activeKeyList == KeyStorage.Type.Private) {
+					if (editableKey.keyType == KeyStorage.Type.Private) {
 						keyStorage.SaveKey(key, KeyStorage.Type.Private);
 					} else {
 						keyStorage.SaveKey(key, KeyStorage.Type.Public);
 					}
 				}
 
+				activeKeyList = editableKey.keyType;
 				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
 				editableKey = null;
 			}
@@ -290,8 +296,8 @@ public class MainActivity extends AppCompatActivity
 		deleteKeyBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
-				if (editableKey != null) {
-					keyStorage.RemoveKey(activeKeyList, editableKey.id);
+				if (editableKey.dbId != -1) {
+					keyStorage.RemoveKey(activeKeyList, editableKey.dbId);
 					OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
 				}
 			}
@@ -301,8 +307,14 @@ public class MainActivity extends AppCompatActivity
 		genPubKeyBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				String name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
+				if (name.isEmpty()) {
+					ShowMessage("You must specify a name", v);
+					return;
+				}
+
 				FullKeyInfo key = new FullKeyInfo();
-				key.name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
+				key.name = name;
 				key.data = ((EditText) findViewById(R.id.keyDataText)).getText().toString();
 				GenNSavePubKey(key);
 				ShowMessage("Public Key Is Generated", v);
@@ -314,6 +326,7 @@ public class MainActivity extends AppCompatActivity
 			@Override
 			public void onClick(View v) {
 				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
+				editableKey = null;
 			}
 		});
 
@@ -334,6 +347,31 @@ public class MainActivity extends AppCompatActivity
 				ShareText(key.data);
 			}
 		});
+
+		Button showDecryptionDetailsBtn = (Button) findViewById(R.id.showDecryptionDetailsBtn);
+		showDecryptionDetailsBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				View decryptionDetailsLayout = findViewById(R.id.decryptionDetailsLayout);
+				if (decryptionDetailsLayout.getVisibility() == View.GONE) {
+					decryptionDetailsLayout.setVisibility(View.VISIBLE);
+					((Button)findViewById(R.id.showDecryptionDetailsBtn)).setText("Hide Details");
+				} else {
+					decryptionDetailsLayout.setVisibility(View.GONE);
+					((Button)findViewById(R.id.showDecryptionDetailsBtn)).setText("Show Details");
+				}
+			}
+		});
+
+
+		Button copyEncryptedBtn = (Button) findViewById(R.id.copyEncryptedBtn);
+		copyEncryptedBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				String result = ((TextView) findViewById(R.id.shareResultView)).getText().toString();
+				ToClipboard(result);
+			}
+		});
 	}
 
 	private void ShowMessage(String message, View view) {
@@ -351,9 +389,15 @@ public class MainActivity extends AppCompatActivity
 
 		if (dataType == 5) {
 			OpenShareLayout();
-			((TextView) findViewById(R.id.textView10)).setText(data);
+			((TextView) findViewById(R.id.shareInputView)).setText(data);
 			String decrypted = DecryptMessage(data);
-			((EditText) findViewById(R.id.editText)).setText(decrypted);
+			((TextView) findViewById(R.id.shareResultView)).setText(decrypted);
+		}
+		else if (dataType == 3) {
+			FullKeyInfo keyInfo = new FullKeyInfo();
+			keyInfo.keyType = KeyStorage.Type.Public;
+			keyInfo.data = data;
+			OpenEditKeyLayout(keyInfo);
 		}
 	}
 
@@ -498,28 +542,31 @@ public class MainActivity extends AppCompatActivity
 		findViewById(R.id.decryptionLayout).setVisibility(View.VISIBLE);
 	}
 
-	private void OpenEditKeyLayout() {
+	private void OpenEditKeyLayout(FullKeyInfo keyInfo) {
 		HideAllLayouts();
 		findViewById(R.id.editKeyLayout).setVisibility(View.VISIBLE);
+		editableKey = keyInfo;
 
-		if (editableKey != null) {
-			FullKeyInfo key = keyStorage.GetKey(activeKeyList, editableKey.id);
-			((EditText) findViewById(R.id.keyNameText)).setText(key.name);
-			((EditText) findViewById(R.id.keyDataText)).setText(key.data);
+		if (keyInfo.dbId != -1)
+		{
 			findViewById(R.id.deleteKeyBtn).setVisibility(View.VISIBLE);
 		}
 		else
 		{
-			((EditText) findViewById(R.id.keyNameText)).setText("");
-			((EditText) findViewById(R.id.keyDataText)).setText("");
 			findViewById(R.id.deleteKeyBtn).setVisibility(View.GONE);
 		}
 
-		if (activeKeyList == KeyStorage.Type.Private) {
+		((EditText) findViewById(R.id.keyNameText)).setText(keyInfo.name);
+		((EditText) findViewById(R.id.keyDataText)).setText(keyInfo.data);
+
+		if (keyInfo.keyType == KeyStorage.Type.Private)
+		{
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.VISIBLE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.GONE);
 			findViewById(R.id.sharePublicBtn).setVisibility(View.VISIBLE);
-		} else {
+		}
+		else
+		{
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.GONE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.VISIBLE);
 			findViewById(R.id.sharePublicBtn).setVisibility(View.GONE);
