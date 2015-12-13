@@ -12,5 +12,6 @@ public class FullKeyInfo {
 	public native String EncryptMessage(String message);
 	public native String DecryptMessage(String cipher);
 
-	public native void UpdateFingerprint();
+	public native void UpdatePublicFingerprint();
+	public native void UpdatePrivateFingerprint();
 }

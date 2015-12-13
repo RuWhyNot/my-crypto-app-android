@@ -53,10 +53,12 @@ public class MainActivity extends AppCompatActivity
 		if(receivedAction.equals(Intent.ACTION_SEND))
 		{
 			//String receivedType = receivedIntent.getType();
-			OpenDecryptionLayout();
-			EditText cipherText = (EditText) findViewById(R.id.cipherText);
-			cipherText.setText(receivedIntent.getStringExtra(Intent.EXTRA_TEXT));
+			OpenShareLayout();
+			TextView inputDataField = (TextView) findViewById(R.id.textView10);
+			inputDataField.setText(receivedIntent.getStringExtra(Intent.EXTRA_TEXT));
 		}
+
+		OpenEncryptionLayout(); // default layout
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -259,7 +261,11 @@ public class MainActivity extends AppCompatActivity
 
 				key.name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
 				key.data = ((EditText) findViewById(R.id.keyDataText)).getText().toString();
-				key.UpdateFingerprint();
+				if (activeKeyList == KeyStorage.Type.Private) {
+					key.UpdatePrivateFingerprint();
+				} else {
+					key.UpdatePublicFingerprint();
+				}
 
 				if (editableKey != null) {
 					if (activeKeyList == KeyStorage.Type.Private) {
@@ -271,7 +277,6 @@ public class MainActivity extends AppCompatActivity
 				else {
 					if (activeKeyList == KeyStorage.Type.Private) {
 						keyStorage.SaveKey(key, KeyStorage.Type.Private);
-						GenNSavePubKey(key);
 					} else {
 						keyStorage.SaveKey(key, KeyStorage.Type.Public);
 					}
@@ -320,6 +325,51 @@ public class MainActivity extends AppCompatActivity
 				ShareText(((EditText) findViewById(R.id.keyDataText)).getText().toString());
 			}
 		});
+
+		Button sharePublicBtn = (Button) findViewById(R.id.sharePublicBtn);
+		sharePublicBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				FullKeyInfo key = new FullKeyInfo();
+				key.GeneratePublic(((EditText) findViewById(R.id.keyDataText)).getText().toString());
+				ShareText(key.data);
+			}
+		});
+
+		Button decipherShareBtn = (Button) findViewById(R.id.decipherShareBtn);
+		decipherShareBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TextView cipherView = (TextView) findViewById(R.id.textView10);
+				String cipher = cipherView.getText().toString();
+				String message = DecryptMessage(cipher);
+				EditText resultField = (EditText) findViewById(R.id.editText);
+				resultField.setVisibility(View.VISIBLE);
+				findViewById(R.id.textView11).setVisibility(View.VISIBLE);
+				resultField.setText(message);
+			}
+		});
+
+		Button saveShareAsPubBtn = (Button) findViewById(R.id.saveShareAsPubBtn);
+		saveShareAsPubBtn.setOnClickListener(new View.OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				TextView keyView = (TextView) findViewById(R.id.textView10);
+				String keyData = keyView.getText().toString();
+
+				FullKeyInfo key = new FullKeyInfo();
+				key.data = keyData;
+				key.UpdatePublicFingerprint();
+				key.name = Integer.toHexString(key.fingerprint);
+
+				int id = keyStorage.SaveKey(key, KeyStorage.Type.Public);
+
+				editableKey = new DbKeyInfo();
+				editableKey.id = id;
+				activeKeyList = KeyStorage.Type.Public;
+				OpenEditKeyLayout();
+			}
+		});
 	}
 
 	private void ShowMessage(String message, View view) {
@@ -335,7 +385,8 @@ public class MainActivity extends AppCompatActivity
 	}
 
 	private void GenNSavePubKey(FullKeyInfo key) {
-		key.GeneratePublic(key.data);
+		String data = key.data;
+		key.GeneratePublic(data);
 		keyStorage.SaveKey(key, KeyStorage.Type.Public);
 	}
 
@@ -412,6 +463,7 @@ public class MainActivity extends AppCompatActivity
 		findViewById(R.id.decryptionLayout).setVisibility(View.GONE);
 		findViewById(R.id.keysLayout).setVisibility(View.GONE);
 		findViewById(R.id.editKeyLayout).setVisibility(View.GONE);
+		findViewById(R.id.shareGetLayout).setVisibility(View.GONE);
 	}
 
 	private void FillKeysList(KeyStorage.Type type)
@@ -485,10 +537,17 @@ public class MainActivity extends AppCompatActivity
 		if (activeKeyList == KeyStorage.Type.Private) {
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.VISIBLE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.GONE);
+			findViewById(R.id.sharePublicBtn).setVisibility(View.VISIBLE);
 		} else {
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.GONE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.VISIBLE);
+			findViewById(R.id.sharePublicBtn).setVisibility(View.GONE);
 		}
+	}
+
+	private void OpenShareLayout() {
+		HideAllLayouts();
+		findViewById(R.id.shareGetLayout).setVisibility(View.VISIBLE);
 	}
 
     @Override

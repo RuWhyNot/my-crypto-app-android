@@ -92,7 +92,7 @@ JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetDataFinger
 	return static_cast<int>(data->GetFingerprint());
 }
 
-JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdateFingerprint
+JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdatePublicFingerprint
 		(JNIEnv *env, jobject instance)
 {
 	jclass clazz = env->GetObjectClass(instance);
@@ -107,14 +107,22 @@ JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdateFingerpr
 		env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"),
 						 static_cast<int>(pubKey->GetFingerprint()));
 	}
-	else
+}
+
+JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdatePrivateFingerprint
+		(JNIEnv *env, jobject instance)
+{
+	jclass clazz = env->GetObjectClass(instance);
+	jstring keyDataStr = (jstring)env->GetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"));
+
+	const char *privateKeyBase64 = env->GetStringUTFChars(keyDataStr, 0);
+	Crypto::Data::Ptr keyData = Crypto::Data::Create(privateKeyBase64, Crypto::Data::Encoding::Base64);
+
+	Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
+	if (key)
 	{
-		Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
-		if (key)
-		{
-			env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"),
-							 static_cast<int>(key->GetFingerprint()));
-		}
+		env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"),
+						 static_cast<int>(key->GetFingerprint()));
 	}
 }
 

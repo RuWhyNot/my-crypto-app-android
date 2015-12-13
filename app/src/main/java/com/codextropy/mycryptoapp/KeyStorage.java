@@ -64,7 +64,6 @@ public class KeyStorage {
 			do
 			{
 				FullKeyInfo key = new FullKeyInfo();
-				key = new FullKeyInfo();
 				key.data = c.getString(idColData);
 				key.fingerprint = c.getInt(idColFingerprint);
 				key.name = c.getString(idColName);
