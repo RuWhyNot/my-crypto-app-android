@@ -133,11 +133,8 @@ public class MainActivity extends AppCompatActivity
 				FullKeyInfo key = new FullKeyInfo();
 				key.GeneratePrivate((int) Math.floor(Math.random() * 100000), 1024);
 				key.name = Integer.toHexString(key.fingerprint);
-				FullKeyInfo pubKey = new FullKeyInfo();
-				pubKey.GeneratePublic(key.data);
-				pubKey.name = Integer.toHexString(pubKey.fingerprint);
-
-				OpenEditKeyLayout(new FullKeyInfo());
+				key.keyType = activeKeyList;
+				OpenEditKeyLayout(key);
 			}
 		});
 
@@ -272,7 +269,7 @@ public class MainActivity extends AppCompatActivity
 				key.UpdateFingerprint();
 
 				if (editableKey.dbId != -1) {
-					if (activeKeyList == KeyStorage.Type.Private) {
+					if (editableKey.keyType == KeyStorage.Type.Private) {
 						keyStorage.UpdateKey(editableKey.dbId, key, KeyStorage.Type.Private);
 					} else {
 						keyStorage.UpdateKey(editableKey.dbId, key, KeyStorage.Type.Public);
@@ -286,8 +283,7 @@ public class MainActivity extends AppCompatActivity
 					}
 				}
 
-				activeKeyList = editableKey.keyType;
-				OpenKeysLayout(isKeyListOpenedForChoice, activeKeyList);
+				OpenKeysLayout(isKeyListOpenedForChoice, editableKey.keyType);
 				editableKey = null;
 			}
 		});
@@ -510,12 +506,12 @@ public class MainActivity extends AppCompatActivity
 				android.R.layout.simple_list_item_1, values);
 		keysList.setAdapter(adapter);
 
-		activeKeyList = type;
 		loadedKeys = keys;
 	}
 
 	private void OpenKeysLayout(boolean forChoice, KeyStorage.Type type)
 	{
+		activeKeyList = type;
 		isKeyListOpenedForChoice = forChoice;
 		HideAllLayouts();
 		findViewById(R.id.keysLayout).setVisibility(View.VISIBLE);
