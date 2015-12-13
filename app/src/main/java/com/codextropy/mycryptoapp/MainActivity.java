@@ -1,5 +1,6 @@
 package com.codextropy.mycryptoapp;
 
+import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity
 
 		keyStorage = new KeyStorage(getBaseContext());
 
-		OpenEncryptionLayout(); // default layout
+		OpenKeysLayout(false, KeyStorage.Type.Public); // default layout
 
 		RegisterListeners();
 
@@ -223,6 +224,11 @@ public class MainActivity extends AppCompatActivity
 		privateKeysList.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 			@Override
 			public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+				if (!isKeyListOpenedForChoice) {
+					view.performLongClick();
+					return;
+				}
+
 				FullKeyInfo key = keyStorage.GetKey(activeKeyList, loadedKeys.get(position).id);
 				currentKey = key.data;
 				TextView resultField = (TextView) findViewById(R.id.keyText);
@@ -376,6 +382,7 @@ public class MainActivity extends AppCompatActivity
 
 	private void DoShareInputAction(String data) {
 		int dataType = GetDataType(data);
+		// 0 = Not an application data
 		// 1 = PlainText
 		// 2 = PlainData
 		// 3 = PublicKey
@@ -394,6 +401,11 @@ public class MainActivity extends AppCompatActivity
 			keyInfo.keyType = KeyStorage.Type.Public;
 			keyInfo.data = data;
 			OpenEditKeyLayout(keyInfo);
+		}
+		else if (dataType == 0)
+		{
+			OpenEncryptionLayout();
+			((EditText) findViewById(R.id.editText2)).setText(data);
 		}
 	}
 
@@ -518,10 +530,12 @@ public class MainActivity extends AppCompatActivity
 
 		if (type == KeyStorage.Type.Private)
 		{
+			this.setTitle("Private Keys");
 			findViewById(R.id.button13).setVisibility(View.VISIBLE);
 		}
 		else
 		{
+			this.setTitle("Public Keys");
 			findViewById(R.id.button13).setVisibility(View.GONE);
 		}
 
@@ -530,11 +544,13 @@ public class MainActivity extends AppCompatActivity
 
 	private void OpenEncryptionLayout() {
 		HideAllLayouts();
+		this.setTitle("Encryption");
 		findViewById(R.id.encryptionLayout).setVisibility(View.VISIBLE);
 	}
 
 	private void OpenDecryptionLayout() {
 		HideAllLayouts();
+		this.setTitle("Decryption");
 		findViewById(R.id.decryptionLayout).setVisibility(View.VISIBLE);
 	}
 
@@ -543,12 +559,16 @@ public class MainActivity extends AppCompatActivity
 		findViewById(R.id.editKeyLayout).setVisibility(View.VISIBLE);
 		editableKey = keyInfo;
 
+		String title;
+
 		if (keyInfo.dbId != -1)
 		{
+			title = "Edit ";
 			findViewById(R.id.deleteKeyBtn).setVisibility(View.VISIBLE);
 		}
 		else
 		{
+			title = "Create";
 			findViewById(R.id.deleteKeyBtn).setVisibility(View.GONE);
 		}
 
@@ -557,36 +577,40 @@ public class MainActivity extends AppCompatActivity
 
 		if (keyInfo.keyType == KeyStorage.Type.Private)
 		{
+			title += "Private Key";
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.VISIBLE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.GONE);
 			findViewById(R.id.sharePublicBtn).setVisibility(View.VISIBLE);
 		}
 		else
 		{
+			title += "Public Key";
 			findViewById(R.id.genPubKeyBtn).setVisibility(View.GONE);
 			findViewById(R.id.shareKeyBtn).setVisibility(View.VISIBLE);
 			findViewById(R.id.sharePublicBtn).setVisibility(View.GONE);
 		}
+
+		this.setTitle(title);
 	}
 
 	private void OpenShareLayout() {
 		HideAllLayouts();
+		this.setTitle(R.string.app_name);
 		findViewById(R.id.shareGetLayout).setVisibility(View.VISIBLE);
 	}
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
-        // Handle navigation view item clicks here.
         int id = item.getItemId();
 
         if (id == R.id.nav_encrypt) {
 			OpenEncryptionLayout();
+		} else if (id == R.id.nav_decrypt) {
+			OpenDecryptionLayout();
         } else if (id == R.id.nav_keys) {
 			OpenKeysLayout(false, KeyStorage.Type.Private);
-        } else if (id == R.id.nav_decryption) {
-			OpenDecryptionLayout();
-        } else if (id == R.id.nav_manage) {
-			HideAllLayouts();
+        } else if (id == R.id.nav_pub_keys) {
+			OpenKeysLayout(false, KeyStorage.Type.Public);
         } else if (id == R.id.nav_share) {
 			HideAllLayouts();
         } else if (id == R.id.nav_send) {
