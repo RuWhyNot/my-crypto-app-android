@@ -261,11 +261,7 @@ public class MainActivity extends AppCompatActivity
 
 				key.name = ((EditText) findViewById(R.id.keyNameText)).getText().toString();
 				key.data = ((EditText) findViewById(R.id.keyDataText)).getText().toString();
-				if (activeKeyList == KeyStorage.Type.Private) {
-					key.UpdatePrivateFingerprint();
-				} else {
-					key.UpdatePublicFingerprint();
-				}
+				key.UpdateFingerprint();
 
 				if (editableKey != null) {
 					if (activeKeyList == KeyStorage.Type.Private) {
@@ -359,7 +355,7 @@ public class MainActivity extends AppCompatActivity
 
 				FullKeyInfo key = new FullKeyInfo();
 				key.data = keyData;
-				key.UpdatePublicFingerprint();
+				key.UpdateFingerprint();
 				key.name = Integer.toHexString(key.fingerprint);
 
 				int id = keyStorage.SaveKey(key, KeyStorage.Type.Public);
