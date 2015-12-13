@@ -119,4 +119,18 @@ JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdateFingerpr
 	}
 }
 
+JNIEXPORT jint JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetDataType
+		(JNIEnv *env, jobject, jstring dataBase64_)
+{
+	const char *dataBase64 = env->GetStringUTFChars(dataBase64_, 0);
+
+	Crypto::Data::Ptr data = Crypto::Data::Restore(dataBase64, Crypto::Data::Encoding::Base64);
+
+	Crypto::Data::Type dataType = data->GetType();
+
+	env->ReleaseStringUTFChars(dataBase64_, dataBase64);
+
+	return Crypto::Data::GetByteFromType(dataType);
+}
+
 } // extern "C"

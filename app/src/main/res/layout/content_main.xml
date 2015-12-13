@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:weightSum="100"
         android:id="@+id/encryptionLayout"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -356,7 +356,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/shareGetLayout"
-        android:visibility="gone">
+        android:visibility="visible">
 
         <TextView
             android:layout_width="wrap_content"
@@ -377,31 +377,13 @@
             android:layout_height="wrap_content"
             android:minHeight="10dp"/>
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Decipher"
-                android:id="@+id/decipherShareBtn"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Save Public Key"
-                android:id="@+id/saveShareAsPubBtn"/>
-        </LinearLayout>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:id="@+id/textView11"
-            android:text="Result:"
-            android:visibility="gone"/>
+            android:text="Encrypted:"
+            android:visibility="visible"/>
 
         <EditText
             android:layout_width="fill_parent"
@@ -409,7 +391,7 @@
             android:inputType="textMultiLine"
             android:ems="10"
             android:id="@+id/editText"
-            android:visibility="gone"/>
+            android:visibility="visible"/>
     </LinearLayout>
 
 </RelativeLayout>

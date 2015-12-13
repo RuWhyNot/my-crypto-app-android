@@ -43,25 +43,28 @@ public class MainActivity extends AppCompatActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
 		keyStorage = new KeyStorage(getBaseContext());
+
+		OpenEncryptionLayout(); // default layout
+
+		RegisterListeners();
 
 		Intent receivedIntent = getIntent();
 		String receivedAction = receivedIntent.getAction();
 		if(receivedAction.equals(Intent.ACTION_SEND))
 		{
 			//String receivedType = receivedIntent.getType();
-			OpenShareLayout();
-			TextView inputDataField = (TextView) findViewById(R.id.textView10);
-			inputDataField.setText(receivedIntent.getStringExtra(Intent.EXTRA_TEXT));
+			DoShareInputAction(receivedIntent.getStringExtra(Intent.EXTRA_TEXT));
 		}
+	}
 
-		OpenEncryptionLayout(); // default layout
+	private void RegisterListeners() {
+		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+		setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
+		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
+		fab.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View view) {
 				FullKeyInfo key = new FullKeyInfo();
@@ -80,24 +83,24 @@ public class MainActivity extends AppCompatActivity
 			}
 		});
 
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-        ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
-                this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
-        drawer.setDrawerListener(toggle);
-        toggle.syncState();
+		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
+				this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
+		drawer.setDrawerListener(toggle);
+		toggle.syncState();
 
-        NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-        navigationView.setNavigationItemSelectedListener(this);
+		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
+		navigationView.setNavigationItemSelectedListener(this);
 
 		TextView getPublicBtn = (TextView) findViewById(R.id.keyText);
-        getPublicBtn.setOnClickListener(new View.OnClickListener() {
+		getPublicBtn.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
 				OpenKeysLayout(true, KeyStorage.Type.Public);
 			}
 		});
 
-        Button encryptBtn = (Button) findViewById(R.id.button);
+		Button encryptBtn = (Button) findViewById(R.id.button);
 		encryptBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -331,45 +334,27 @@ public class MainActivity extends AppCompatActivity
 				ShareText(key.data);
 			}
 		});
-
-		Button decipherShareBtn = (Button) findViewById(R.id.decipherShareBtn);
-		decipherShareBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				TextView cipherView = (TextView) findViewById(R.id.textView10);
-				String cipher = cipherView.getText().toString();
-				String message = DecryptMessage(cipher);
-				EditText resultField = (EditText) findViewById(R.id.editText);
-				resultField.setVisibility(View.VISIBLE);
-				findViewById(R.id.textView11).setVisibility(View.VISIBLE);
-				resultField.setText(message);
-			}
-		});
-
-		Button saveShareAsPubBtn = (Button) findViewById(R.id.saveShareAsPubBtn);
-		saveShareAsPubBtn.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				TextView keyView = (TextView) findViewById(R.id.textView10);
-				String keyData = keyView.getText().toString();
-
-				FullKeyInfo key = new FullKeyInfo();
-				key.data = keyData;
-				key.UpdateFingerprint();
-				key.name = Integer.toHexString(key.fingerprint);
-
-				int id = keyStorage.SaveKey(key, KeyStorage.Type.Public);
-
-				editableKey = new DbKeyInfo();
-				editableKey.id = id;
-				activeKeyList = KeyStorage.Type.Public;
-				OpenEditKeyLayout();
-			}
-		});
 	}
 
 	private void ShowMessage(String message, View view) {
 		Snackbar.make(view, message, Snackbar.LENGTH_LONG).setAction("Action", null).show();
+	}
+
+	private void DoShareInputAction(String data) {
+		int dataType = GetDataType(data);
+		// 1 = PlainText
+		// 2 = PlainData
+		// 3 = PublicKey
+		// 4 = PrivateKey
+		// 5 = Cipher
+		// 6 = Signature
+
+		if (dataType == 5) {
+			OpenShareLayout();
+			((TextView) findViewById(R.id.textView10)).setText(data);
+			String decrypted = DecryptMessage(data);
+			((EditText) findViewById(R.id.editText)).setText(decrypted);
+		}
 	}
 
 	private void ShareText(String text) {
@@ -572,6 +557,7 @@ public class MainActivity extends AppCompatActivity
 
     public native String GetTestString();
 	public native int GetDataFingerprint(String data);
+	public native int GetDataType(String data);
 
     static
     {
