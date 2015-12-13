@@ -2,7 +2,6 @@
 #include "my-crypto-lib/src/versions/v20/privatekey_v20.h"
 #include "my-crypto-lib/src/versions/v20/publickey_v20.h"
 
-
 extern "C"
 {
 
@@ -91,6 +90,32 @@ JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetDataFinger
 	env->ReleaseStringUTFChars(dataBase64_, dataBase64);
 
 	return static_cast<int>(data->GetFingerprint());
+}
+
+JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_UpdateFingerprint
+		(JNIEnv *env, jobject instance)
+{
+	jclass clazz = env->GetObjectClass(instance);
+	jstring keyDataStr = (jstring)env->GetObjectField(instance, env->GetFieldID(clazz, "data", "Ljava/lang/String;"));
+
+	const char *privateKeyBase64 = env->GetStringUTFChars(keyDataStr, 0);
+	Crypto::Data::Ptr keyData = Crypto::Data::Create(privateKeyBase64, Crypto::Data::Encoding::Base64);
+
+	Crypto::PublicKey::Ptr pubKey = Crypto::PublicKey_v20::CreateFromData(keyData);
+	if (pubKey)
+	{
+		env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"),
+						 static_cast<int>(pubKey->GetFingerprint()));
+	}
+	else
+	{
+		Crypto::PrivateKey::Ptr key = Crypto::PrivateKey_v20::CreateFromData(keyData);
+		if (key)
+		{
+			env->SetIntField(instance, env->GetFieldID(clazz, "fingerprint", "I"),
+							 static_cast<int>(key->GetFingerprint()));
+		}
+	}
 }
 
 } // extern "C"

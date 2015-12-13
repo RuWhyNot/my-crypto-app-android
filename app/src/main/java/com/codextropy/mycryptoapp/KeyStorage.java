@@ -77,7 +77,7 @@ public class KeyStorage {
 		return result;
 	}
 
-	public void SaveKey(FullKeyInfo key, Type type)
+	public int SaveKey(FullKeyInfo key, Type type)
 	{
 		DbHelper dbHelper = new DbHelper(baseContext);
 		ContentValues cv = new ContentValues();
@@ -89,8 +89,15 @@ public class KeyStorage {
 		cv.put("data", key.data);
 		cv.put("fingerprint", key.fingerprint);
 		cv.put("name", key.name);
-		db.insert(tableName, null, cv);
+		long id = db.insert(tableName, null, cv);
 		dbHelper.close();
+		return (int)id;
+	}
+
+	public void UpdateKey(int id, FullKeyInfo key, Type type)
+	{
+		RemoveKey(type, id);
+		SaveKey(key, type);
 	}
 
 	public void RemoveKey(Type type, int id)

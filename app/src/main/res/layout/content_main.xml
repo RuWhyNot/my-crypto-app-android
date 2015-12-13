@@ -252,7 +252,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Add"
-                    android:id="@+id/button14"
+                    android:id="@+id/addNewKeyBtn"
                     android:visibility="visible"/>
 
                 <Button
@@ -272,12 +272,92 @@
                 android:id="@+id/textView2"/>
 
             <ListView
-                android:layout_width="wrap_content"
+                android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:id="@+id/keysList"
                 android:layout_gravity="left|top"
                 android:headerDividersEnabled="false"/>
         </LinearLayout>
+    </FrameLayout>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/editKeyLayout"
+        android:visibility="gone">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Name"
+                android:id="@+id/textView5"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/keyNameText"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Key"
+                android:id="@+id/textView6"/>
+
+            <EditText
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textMultiLine"
+                android:id="@+id/keyDataText"/>
+
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Save"
+                    android:id="@+id/saveKeyBtn"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Close"
+                    android:id="@+id/closeKeyEditBtn"/>
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Gen Public"
+                    android:id="@+id/genPubKeyBtn"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Share"
+                    android:id="@+id/shareKeyBtn"
+                    />
+
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Delete"
+                    android:id="@+id/deleteKeyBtn"
+                    android:textColor="#e10e0e"/>
+            </LinearLayout>
+
+        </LinearLayout>
+
     </FrameLayout>
 
 </RelativeLayout>
