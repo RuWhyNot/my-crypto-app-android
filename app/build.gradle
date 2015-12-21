@@ -29,8 +29,8 @@ model {
 	}
 
 	android.productFlavors {
-		create("flavor1") {
-			applicationId = "com.app"
+		create("CryptoApp") {
+			applicationId = "com.codextropy.mycryptoapp"
 		}
 	}
 
