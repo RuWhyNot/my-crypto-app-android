@@ -15,7 +15,7 @@
         android:layout_height="match_parent"
         android:weightSum="100"
         android:id="@+id/encryptionLayout"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <TextView
             android:layout_width="wrap_content"
@@ -55,7 +55,8 @@
                 android:inputType="textMultiLine"
                 android:ems="10"
                 android:id="@+id/editText2"
-                android:layout_weight="60"/>
+                android:layout_weight="60"
+                android:maxLines="5"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -93,7 +94,7 @@
             android:inputType="textMultiLine"
             android:id="@+id/editText3"
             android:editable="false"
-            />
+            android:maxLines="5"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -139,7 +140,8 @@
             android:layout_height="wrap_content"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Cipher:"
-            android:id="@+id/textView7"/>
+            android:id="@+id/textView7"
+            android:maxLines="5"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -153,7 +155,8 @@
                 android:inputType="textMultiLine"
                 android:ems="10"
                 android:id="@+id/cipherText"
-                android:layout_weight="60"/>
+                android:layout_weight="60"
+                android:maxLines="5"/>
 
             <Button
                 android:layout_width="wrap_content"
@@ -196,7 +199,8 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:id="@+id/decryptedText"
-            android:editable="false"/>
+            android:editable="false"
+            android:maxLines="5"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -282,7 +286,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/keyNameText"
-            />
+            android:maxLines="5"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -295,7 +299,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
-            android:id="@+id/keyDataText"/>
+            android:id="@+id/keyDataText"
+            android:maxLines="5"/>
 
         <LinearLayout
             android:orientation="horizontal"
@@ -356,27 +361,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/shareGetLayout"
-        android:visibility="gone">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceSmall"
-            android:id="@+id/textView11"
-            android:text="Encrypted:"
-            android:visibility="visible"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Result here"
-            android:id="@+id/shareResultView"/>
-
-        <Space
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:minHeight="10dp"/>
+        android:visibility="visible">
 
         <LinearLayout
             android:orientation="horizontal"
@@ -397,46 +382,84 @@
 
         </LinearLayout>
 
-        <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="match_parent"
+        <ScrollView
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/decryptionDetailsLayout"
-            android:visibility="gone">
+            android:id="@+id/scrollView">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Input:"
-                android:id="@+id/textView9"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Data here"
-                android:id="@+id/shareInputView"/>
-
-            <Space
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:minHeight="10dp"/>
+                android:layout_height="match_parent">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Used Key:"
-                android:id="@+id/textView13"/>
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/decryptionDetailsLayout"
+                    android:visibility="gone">
 
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textAppearance="?android:attr/textAppearanceMedium"
-                android:text="Key Name here"
-                android:id="@+id/usedKeyNameView"/>
-        </LinearLayout>
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Input:"
+                        android:id="@+id/textView9"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Data here"
+                        android:id="@+id/shareInputView"/>
+
+                    <Space
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:minHeight="10dp"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceSmall"
+                        android:text="Used Key:"
+                        android:id="@+id/textView13"/>
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:text="Key Name here"
+                        android:id="@+id/usedKeyNameView"/>
+                </LinearLayout>
+
+                <Space
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="10dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:id="@+id/textView11"
+                    android:text="Encrypted:"
+                    android:visibility="visible"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textAppearance="?android:attr/textAppearanceMedium"
+                    android:text="Result here"
+                    android:id="@+id/shareResultView"/>
+
+            </LinearLayout>
+        </ScrollView>
 
     </LinearLayout>
 

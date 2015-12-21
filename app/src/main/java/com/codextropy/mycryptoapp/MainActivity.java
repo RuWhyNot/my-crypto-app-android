@@ -1,6 +1,5 @@
 package com.codextropy.mycryptoapp;
 
-import android.app.Activity;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Intent;
@@ -232,7 +231,7 @@ public class MainActivity extends AppCompatActivity
 				FullKeyInfo key = keyStorage.GetKey(activeKeyList, loadedKeys.get(position).id);
 				currentKey = key.data;
 				TextView resultField = (TextView) findViewById(R.id.keyText);
-				resultField.setText(currentKey);
+				resultField.setText(key.name);
 				OpenEncryptionLayout();
 			}
 		});
@@ -609,7 +608,7 @@ public class MainActivity extends AppCompatActivity
 			OpenDecryptionLayout();
         } else if (id == R.id.nav_keys) {
 			OpenKeysLayout(false, KeyStorage.Type.Private);
-        } else if (id == R.id.nav_pub_keys) {
+        } else if (id == R.id.nav_contacts) {
 			OpenKeysLayout(false, KeyStorage.Type.Public);
         } else if (id == R.id.nav_share) {
 			HideAllLayouts();
