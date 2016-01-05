@@ -5,7 +5,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
-class DbHelper extends SQLiteOpenHelper
+public final class DbHelper extends SQLiteOpenHelper
 {
 	private static final String PRIVATE_KEYS_TABLE_NAME = "PrivateKeys";
 	private static final String PUBLIC_KEYS_TABLE_NAME = "PublicKeys";

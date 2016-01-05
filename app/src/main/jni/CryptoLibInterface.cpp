@@ -80,7 +80,7 @@ JNIEXPORT jstring JNICALL Java_com_codextropy_mycryptoapp_FullKeyInfo_DecryptMes
 	return env->NewStringUTF(result.c_str());
 }
 
-JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_MainActivity_GetDataFingerprint
+JNIEXPORT int JNICALL Java_com_codextropy_mycryptoapp_KeyStorage_GetDataFingerprint
 		(JNIEnv *env, jobject instance, jstring dataBase64_)
 {
 	const char *dataBase64 = env->GetStringUTFChars(dataBase64_, 0);

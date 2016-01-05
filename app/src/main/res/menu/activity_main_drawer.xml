@@ -2,8 +2,8 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
 
     <group android:checkableBehavior="single">
-        <item android:id="@+id/nav_contacts" android:icon="@android:drawable/ic_menu_agenda"
-              android:title="Contacts" />
+        <item android:id="@+id/nav_recipients" android:icon="@android:drawable/ic_menu_agenda"
+              android:title="Recipients" />
         <item android:id="@+id/nav_keys" android:icon="@android:drawable/ic_menu_save"
               android:title="My Keys" />
         <item android:id="@+id/nav_encrypt" android:icon="@android:drawable/ic_menu_camera"

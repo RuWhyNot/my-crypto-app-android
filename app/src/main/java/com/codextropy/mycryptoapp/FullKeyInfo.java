@@ -1,7 +1,7 @@
 package com.codextropy.mycryptoapp;
 
 
-public class FullKeyInfo {
+public final class FullKeyInfo {
 	public String data;
 	public String name;
 	public int fingerprint;

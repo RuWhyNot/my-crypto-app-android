@@ -178,7 +178,7 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:text="Decrypt"
-            android:id="@+id/button10"
+            android:id="@+id/decryptBtn"
             android:width="25dp"
             />
 
@@ -286,7 +286,8 @@
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
             android:id="@+id/keyNameText"
-            android:maxLines="5"/>
+            android:inputType="textPersonName"
+            android:minLines="2"/>
 
         <TextView
             android:layout_width="wrap_content"
@@ -341,7 +342,7 @@
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Save Public"
+                android:text="Create Recipient"
                 android:id="@+id/genPubKeyBtn"
                 />
 
@@ -354,6 +355,24 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Make Default"
+                android:id="@+id/makeDefaultBtn"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Encrypt For"
+                android:id="@+id/encryptForBtn"/>
+        </LinearLayout>
+
     </LinearLayout>
 
     <LinearLayout
@@ -361,7 +380,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/shareGetLayout"
-        android:visibility="visible">
+        android:visibility="gone">
 
         <LinearLayout
             android:orientation="horizontal"

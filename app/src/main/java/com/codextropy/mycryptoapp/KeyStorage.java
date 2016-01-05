@@ -8,7 +8,7 @@ import android.database.sqlite.SQLiteDatabase;
 import java.util.ArrayList;
 import java.util.List;
 
-public class KeyStorage {
+public final class KeyStorage {
 	private Context baseContext;
 
 	public enum Type
@@ -21,6 +21,8 @@ public class KeyStorage {
 	{
 		baseContext = context;
 	}
+
+	public native int GetDataFingerprint(String data);
 
 	public FullKeyInfo GetKey(Type type, int id)
 	{
@@ -53,7 +55,7 @@ public class KeyStorage {
 
 		String tableName = DbHelper.GetKeysTableName(type);
 
-		Cursor c = db.query(tableName, null, "fingerprint="+fingerprint, null, null, null, null);
+		Cursor c = db.query(tableName, null, "fingerprint=" + fingerprint, null, null, null, null);
 
 		if (c.moveToFirst())
 		{
@@ -105,7 +107,7 @@ public class KeyStorage {
 		SQLiteDatabase db = dbHelper.getWritableDatabase();
 
 		String tableName = DbHelper.GetKeysTableName(type);
-		db.delete(tableName, "id="+id, null);
+		db.delete(tableName, "id=" + id, null);
 	}
 
 	public List<DbKeyInfo> GetAllKeys(Type type)
@@ -137,5 +139,20 @@ public class KeyStorage {
 		dbHelper.close();
 
 		return keys;
+	}
+
+	public String DecryptMessage(String cipher)
+	{
+		int fingerprint = GetDataFingerprint(cipher);
+		List<FullKeyInfo> keys = GetKeysForFingerprint(KeyStorage.Type.Private, fingerprint);
+		for (FullKeyInfo key : keys)
+		{
+			String message = key.DecryptMessage(cipher);
+			if (!message.isEmpty()) {
+				return message;
+			}
+		}
+
+		return "";
 	}
 }
