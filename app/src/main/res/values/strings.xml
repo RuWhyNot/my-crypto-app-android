@@ -5,4 +5,7 @@
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
     <string name="action_settings">Settings</string>
+    <string name="action_add">Add Existing</string>
+    <string name="action_generate">Generate New</string>
+    <string name="action_remove">Delete</string>
 </resources>

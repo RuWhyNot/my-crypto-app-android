@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools" tools:context=".MainActivity">
     <item android:id="@+id/action_settings" android:title="@string/action_settings"
           android:orderInCategory="100" app:showAsAction="never" android:visible="false"/>
-    <item android:id="@+id/action_add" android:title="@string/action_settings"
-          android:orderInCategory="30" app:showAsAction="ifRoom"
-          android:icon="@android:drawable/ic_menu_add" android:visible="false"/>
+    <item android:id="@+id/action_add" android:orderInCategory="30" app:showAsAction="ifRoom"
+          android:icon="@android:drawable/ic_menu_add" android:visible="false" />
 </menu>

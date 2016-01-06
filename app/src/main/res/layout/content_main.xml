@@ -232,27 +232,6 @@
         android:id="@+id/keysLayout"
         android:visibility="gone">
 
-        <LinearLayout
-            android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content">
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Add"
-                android:id="@+id/addNewKeyBtn"
-                android:visibility="visible"/>
-
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Generate New"
-                android:id="@+id/button13"
-                android:visibility="visible"/>
-
-        </LinearLayout>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

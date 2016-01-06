@@ -10,10 +10,14 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.ContextMenu;
+import android.view.Gravity;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 
 import java.util.Set;
@@ -49,26 +53,6 @@ public final class MainActivity extends AppCompatActivity {
 	private void RegisterListeners() {
 		Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
 		setSupportActionBar(toolbar);
-
-		FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-		fab.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View view) {
-				FullKeyInfo key = new FullKeyInfo();
-				key.GeneratePrivate((int) Math.floor(Math.random() * 100000), 1024);
-
-				FullKeyInfo pubKey = new FullKeyInfo();
-				pubKey.GeneratePublic(key.data);
-
-				String someMessage = GetTestString();
-
-				String encrypted = pubKey.EncryptMessage(someMessage);
-				String decrypted = key.DecryptMessage(encrypted);
-
-				Snackbar.make(view, decrypted, Snackbar.LENGTH_LONG)
-						.setAction("Action", null).show();
-			}
-		});
 
 		DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
 		ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(

@@ -159,7 +159,7 @@ public final class KeyEditScreen extends ScreenImpl
 	{
 		String name = ((EditText) screenView.findViewById(R.id.keyNameText)).getText().toString();
 		if (name.isEmpty()) {
-			//ShowMessage("You must specify a name", v);
+			systemInterface.ShowMessage("You must specify a name", screenView);
 			return;
 		}
 
