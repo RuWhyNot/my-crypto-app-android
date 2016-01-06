@@ -2,10 +2,14 @@ package com.codextropy.mycryptoapp;
 
 import android.support.annotation.Nullable;
 
+import java.util.Set;
 import java.util.Stack;
 
 public final class ScreenManagerImpl implements ScreenManager {
 	private Stack<Screen> screens;
+
+	private Set<Integer> menuItemsToHide;
+	private Set<Integer> menuItemsToShow;
 
 	public ScreenManagerImpl() {
 		this.screens = new Stack<>();

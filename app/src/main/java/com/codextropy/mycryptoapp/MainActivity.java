@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -13,15 +12,17 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.TextView;
 
-public final class MainActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+import java.util.Set;
 
-	KeyStorage keyStorage;
-	ScreenManager screenManager;
-	SystemInterface systemInterface;
+public final class MainActivity extends AppCompatActivity {
+
+	private KeyStorage keyStorage;
+	private ScreenManager screenManager;
+	private SystemInterface systemInterface;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -76,7 +77,31 @@ public final class MainActivity extends AppCompatActivity
 		toggle.syncState();
 
 		NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
-		navigationView.setNavigationItemSelectedListener(this);
+		navigationView.setNavigationItemSelectedListener(new NavigationView.OnNavigationItemSelectedListener() {
+			@Override
+			public boolean onNavigationItemSelected(MenuItem item) {
+				int id = item.getItemId();
+
+				screenManager.Clear();
+				if (id == R.id.nav_encrypt) {
+					OpenEncryptionLayout();
+				} else if (id == R.id.nav_decrypt) {
+					OpenDecryptionLayout();
+				} else if (id == R.id.nav_keys) {
+					OpenKeysLayout(KeyStorage.Type.Private);
+				} else if (id == R.id.nav_recipients) {
+					OpenKeysLayout(KeyStorage.Type.Public);
+				} else if (id == R.id.nav_share) {
+					//
+				} else if (id == R.id.nav_send) {
+					//
+				}
+
+				DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
+				drawer.closeDrawer(GravityCompat.START);
+				return true;
+			}
+		});
 	}
 
 	private void DoShareInputAction(String data) {
@@ -127,23 +152,32 @@ public final class MainActivity extends AppCompatActivity
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+		Screen currentScreen = screenManager.GetCurrent();
+
+		if (currentScreen != null) {
+			Set<Integer> menuItemsToShow = currentScreen.GetRelatedMenuItems();
+
+			for (int i = 0; i < menu.size(); i++) {
+				MenuItem item = menu.getItem(i);
+				item.setVisible(menuItemsToShow.contains(menu.getItem(i).getItemId()));
+			}
+		}
+
         return true;
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
+	@Override
+	public boolean onOptionsItemSelected(MenuItem item) {
+		Screen currentScreen = screenManager.GetCurrent();
 
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
+		if (currentScreen != null) {
+			currentScreen.HandleMenuItemPress(item);
+			return true;
+		}
 
-        return super.onOptionsItemSelected(item);
-    }
+		return super.onOptionsItemSelected(item);
+	}
 
 	private void OpenKeysLayout(KeyStorage.Type type)
 	{
@@ -165,30 +199,6 @@ public final class MainActivity extends AppCompatActivity
 	private void OpenShareLayout() {
 		screenManager.PushScreen(new ShareGetScreen(this, systemInterface));
 	}
-
-    @Override
-    public boolean onNavigationItemSelected(MenuItem item) {
-        int id = item.getItemId();
-
-		screenManager.Clear();
-        if (id == R.id.nav_encrypt) {
-			OpenEncryptionLayout();
-		} else if (id == R.id.nav_decrypt) {
-			OpenDecryptionLayout();
-        } else if (id == R.id.nav_keys) {
-			OpenKeysLayout(KeyStorage.Type.Private);
-        } else if (id == R.id.nav_recipients) {
-			OpenKeysLayout(KeyStorage.Type.Public);
-        } else if (id == R.id.nav_share) {
-			//
-        } else if (id == R.id.nav_send) {
-			//
-        }
-
-        DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
-		drawer.closeDrawer(GravityCompat.START);
-        return true;
-    }
 
     public native String GetTestString();
 	public native int GetDataType(String data);

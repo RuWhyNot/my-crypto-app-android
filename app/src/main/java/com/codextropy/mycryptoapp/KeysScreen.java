@@ -66,6 +66,15 @@ public final class KeysScreen extends ScreenImpl
 				screenManager.PushScreen(new KeyEditScreen(activity, keyInfo, keyStorage, systemInterface));
 			}
 		});
+
+		RegisterMenuItem(R.id.action_add, new MenuItemHandler() {
+			@Override
+			public void Handle() {
+				FullKeyInfo keyInfo = new FullKeyInfo();
+				keyInfo.keyType = type;
+				screenManager.PushScreen(new KeyEditScreen(activity, keyInfo, keyStorage, systemInterface));
+			}
+		});
 	}
 
 	@Override
